@@ -1,42 +1,47 @@
+// src/screens/HomeScreen.tsx
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
+import { HomeScreenProps } from '../types/navigation';
+import TopBar from '../components/TopBar.tsx';
 
-export default function HomeScreen() {
+const HomeScreen: React.FC<HomeScreenProps> = () => {
+  const handleProfilePress = () => {
+    console.log('Profile pressed');
+    // Navigate to profile or open profile modal
+  };
+
+  const handleSearchPress = () => {
+    console.log('Search pressed');
+    // Navigate to search screen
+  };
+
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>BiteList</Text>
-      <Text style={styles.subtitle}>Discover your next favorite meal</Text>
-
-      <Text style={styles.text}>
-        Browse a curated list of food items from our mock API. Tap on any item
-        to see details and save your favorites.
-      </Text>
+      <TopBar
+        onProfilePress={handleProfilePress}
+        onSearchPress={handleSearchPress}
+      />
+      <View style={styles.content}>
+        <Text style={styles.text}>Home Screen</Text>
+      </View>
     </View>
   );
-}
+};
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: '#FFFFFF',
+  },
+  content: {
+    flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    padding: 24,
-    backgroundColor: '#fff',
-  },
-  title: {
-    fontSize: 32,
-    fontWeight: 'bold',
-    marginBottom: 8,
-  },
-  subtitle: {
-    fontSize: 16,
-    color: '#777',
-    marginBottom: 16,
   },
   text: {
-    fontSize: 14,
-    textAlign: 'center',
-    color: '#444',
-    lineHeight: 20,
+    fontSize: 18,
+    color: '#333',
   },
 });
+
+export default HomeScreen;

@@ -22,7 +22,7 @@ const Loader = ({ size = 100, fullscreen = false, style }: LoaderProps) => {
         autoPlay
         loop
         style={{ width: size, height: size }}
-        source={require('../assests/loader/page.json')}
+        source={require('../../assests/loader/page.json')}
       />
     </View>
   );

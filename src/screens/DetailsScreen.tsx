@@ -1,42 +1,37 @@
+// src/screens/DetailsScreen.tsx
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
+import { DetailsScreenProps } from '../types/navigation';
+import TopBar from '../components/TopBar.tsx';
 
-export default function DetailsScreen() {
+const DetailsScreen: React.FC<DetailsScreenProps> = () => {
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>BiteList</Text>
-      <Text style={styles.subtitle}>Discover your next favorite meal</Text>
-
-      <Text style={styles.text}>
-        Browse a curated list of food items from our mock API. Tap on any item
-        to see details and save your favorites.
-      </Text>
+      <TopBar
+        onProfilePress={() => console.log('Profile')}
+        onSearchPress={() => console.log('Search')}
+      />
+      <View style={styles.content}>
+        <Text style={styles.text}>Details Screen</Text>
+      </View>
     </View>
   );
-}
+};
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: '#FFFFFF',
+  },
+  content: {
+    flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    padding: 24,
-    backgroundColor: '#fff',
-  },
-  title: {
-    fontSize: 32,
-    fontWeight: 'bold',
-    marginBottom: 8,
-  },
-  subtitle: {
-    fontSize: 16,
-    color: '#777',
-    marginBottom: 16,
   },
   text: {
-    fontSize: 14,
-    textAlign: 'center',
-    color: '#444',
-    lineHeight: 20,
+    fontSize: 18,
+    color: '#333',
   },
 });
+
+export default DetailsScreen;
