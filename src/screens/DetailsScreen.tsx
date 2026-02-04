@@ -1,4 +1,3 @@
-// src/screens/DetailsScreen.tsx
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import { DetailsScreenProps } from '../types/navigation';

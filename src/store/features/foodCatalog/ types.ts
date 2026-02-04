@@ -1,6 +1,7 @@
 export interface FoodItem {
   id: number;
   name: string;
+  title?: string;
 
   image?: string;
   rating?: number;
@@ -16,6 +17,11 @@ export interface FoodState {
   foods: FoodItem[];
   status: 'idle' | 'loading' | 'succeeded' | 'failed';
   error: string | null;
+
+  category: string;
+  page: number;
+  hasMore: boolean;
+  categories: string[];
 }
 
 export interface FavoritesState {

@@ -1,10 +1,11 @@
 import { configureStore } from '@reduxjs/toolkit';
-import foodReducer from './features/foodCatalog/foodSlice.ts';
-import favoritesReducer from './features/foodCatalog/  favoritesSlice.ts';
+import foodReducer from './features/foodCatalog/foodSlice';
 
 export const store = configureStore({
   reducer: {
     foodCatalog: foodReducer,
-    favorites: favoritesReducer,
   },
 });
+
+export type RootState = ReturnType<typeof store.getState>;
+export type AppDispatch = typeof store.dispatch;
