@@ -1,5 +1,6 @@
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
+import Loader from '../ui/Loader.tsx';
 
 export default function FavoritesScreen() {
   return (
@@ -7,10 +8,7 @@ export default function FavoritesScreen() {
       <Text style={styles.title}>BiteList</Text>
       <Text style={styles.subtitle}>Discover your next favorite meal</Text>
 
-      <Text style={styles.text}>
-        Browse a curated list of food items from our mock API. Tap on any item
-        to see details and save your favorites.
-      </Text>
+    <Loader/>
     </View>
   );
 }
