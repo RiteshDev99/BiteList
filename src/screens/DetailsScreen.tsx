@@ -1,9 +1,8 @@
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
-import { DetailsScreenProps } from '../types/navigation';
 import TopBar from '../components/TopBar.tsx';
 
-const DetailsScreen: React.FC<DetailsScreenProps> = () => {
+const DetailsScreen = () => {
   return (
     <View style={styles.container}>
       <TopBar

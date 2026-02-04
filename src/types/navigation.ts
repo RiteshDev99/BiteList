@@ -1,4 +1,3 @@
-// src/types/navigation.ts
 import { BottomTabScreenProps } from '@react-navigation/bottom-tabs';
 
 export type RootTabParamList = {

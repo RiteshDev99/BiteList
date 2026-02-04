@@ -3,22 +3,25 @@ import { View, Text, Pressable, ScrollView, StyleSheet } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
 import { setCategory } from '../store/features/foodCatalog/foodSlice.ts';
 import { fetchCategories } from '../store/features/foodCatalog/foodThunks';
+import { AppDispatch } from '../store/store';
 
 const DEFAULT_CATEGORIES = ['all', 'italian', 'sushi', 'burger'];
 
 export default function CategoryTabs() {
-  const dispatch = useDispatch();
+  const dispatch = useDispatch<AppDispatch>();
   const selected = useSelector((state: any) => state.foodCatalog.category);
   const categories = useSelector((state: any) => state.foodCatalog.categories ?? []);
 
   useEffect(() => {
     if (!categories || categories.length === 0) {
-      // @ts-ignore
       dispatch(fetchCategories());
     }
   }, [categories, dispatch]);
 
-  const list = categories.length ? categories.map((c: string) => c.toLowerCase()) : DEFAULT_CATEGORIES;
+  // always include 'all' as the first tab
+  const list = categories.length
+    ? ['all', ...categories.map((c: string) => c.toLowerCase())]
+    : DEFAULT_CATEGORIES;
 
   return (
     <View style={styles.container}>
@@ -46,6 +49,7 @@ export default function CategoryTabs() {
 const styles = StyleSheet.create({
   container: {
     marginVertical: 12,
+    paddingHorizontal: 15,
   },
   tab: {
     paddingHorizontal: 18,
@@ -55,7 +59,7 @@ const styles = StyleSheet.create({
     marginRight: 10,
   },
   activeTab: {
-    backgroundColor: '#4CAF50',
+    backgroundColor: '#00e05e',
   },
   text: {
     fontWeight: '600',

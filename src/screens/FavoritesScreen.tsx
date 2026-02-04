@@ -1,9 +1,8 @@
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
-import { FavoriteScreenProps } from '../types/navigation';
 import TopBar from '../components/TopBar.tsx';
 
-const FavoriteScreen: React.FC<FavoriteScreenProps> = () => {
+const FavoriteScreen = () => {
   return (
     <View style={styles.container}>
       <TopBar
