@@ -25,7 +25,7 @@ const TabNavigator = () => {
         },
 
         tabBarIcon: ({ focused }) => {
-          let iconName;
+          let iconName: string;
 
           switch (route.name) {
             case 'Home':
@@ -33,9 +33,6 @@ const TabNavigator = () => {
               break;
             case 'Favorite':
               iconName = 'favorite';
-              break;
-            case 'Details':
-              iconName = 'info';
               break;
             default:
               iconName = 'home';
@@ -56,7 +53,18 @@ const TabNavigator = () => {
     >
       <Tab.Screen name="Home" component={HomeScreen} />
       <Tab.Screen name="Favorite" component={FavoritesScreen} />
-      <Tab.Screen name="Details" component={DetailsScreen} />
+
+      {/* Details screen remains registered so cards can navigate to it, but it's hidden from the tab bar */}
+      <Tab.Screen
+        name="Details"
+        component={DetailsScreen}
+        options={{
+          // do not render a tab button for Details
+          tabBarButton: () => null,
+          // when Details is active, hide the tab bar
+          tabBarStyle: { display: 'none' },
+        }}
+      />
     </Tab.Navigator>
   );
 };

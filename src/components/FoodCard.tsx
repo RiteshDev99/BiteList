@@ -1,23 +1,30 @@
 import React, { memo, useState } from 'react';
 import { View, Text, Image, Pressable, StyleSheet } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
 import { FoodItem } from '../store/features/foodCatalog/ types.ts';
 
 interface Props {
   item: FoodItem;
-  onPress?: (item: FoodItem) => void;
+  // onPress removed because card handles navigation internally
   onFavoriteToggle?: (item: FoodItem, liked: boolean) => void;
   hideImage?: boolean;
   fullWidth?: boolean;
-  grid?: boolean;
+  grid?: boolean; // new: render as grid cell (flex:1)
 }
 
-const FoodCard = ({ item, onPress, onFavoriteToggle, hideImage, fullWidth, grid }: Props) => {
+const FoodCard = ({ item, onFavoriteToggle, hideImage, fullWidth, grid }: Props) => {
   const [liked, setLiked] = useState(false);
+  const navigation: any = useNavigation();
 
   const toggleFavorite = () => {
     const newValue = !liked;
     setLiked(newValue);
     onFavoriteToggle?.(item, newValue);
+  };
+
+  const openDetails = () => {
+    // navigate to tab 'Details' and pass item
+    navigation.navigate('Details', { item });
   };
 
   return (
@@ -27,7 +34,7 @@ const FoodCard = ({ item, onPress, onFavoriteToggle, hideImage, fullWidth, grid 
         fullWidth && styles.cardFull,
         grid && styles.cardGrid,
       ]}
-      onPress={() => onPress?.(item)}
+      onPress={openDetails}
     >
       {!hideImage && item.image ? (
         <Image
@@ -38,20 +45,24 @@ const FoodCard = ({ item, onPress, onFavoriteToggle, hideImage, fullWidth, grid 
       ) : null}
 
       <View style={styles.content}>
+        {/* Favorite */}
         <Pressable style={styles.heart} onPress={toggleFavorite}>
           <Text style={[styles.heartText, liked && styles.heartTextActive]}>♥</Text>
         </Pressable>
 
+        {/* Rating */}
         <View style={styles.ratingRow}>
           <Text style={styles.star}>★</Text>
           <Text style={styles.rating}>{item.rating ?? 4.8}</Text>
           <Text style={styles.count}>(120+)</Text>
         </View>
 
+        {/* Title */}
         <Text numberOfLines={2} style={[styles.title, grid && styles.titleGrid]}>
           {item.name}
         </Text>
 
+        {/* Tags */}
         <View style={styles.tagRow}>
           {item.category && (
             <View style={styles.tag}>
