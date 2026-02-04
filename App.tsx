@@ -1,11 +1,10 @@
 import React, { useEffect } from 'react';
 import { Provider, useDispatch } from 'react-redux';
-import { NavigationContainer } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-import { store } from './src/store/store.ts';
-import { setFavorites } from './src/store/features/foodCatalog/  favoritesSlice.ts';
-import TabNavigator from './src/navigations/TabNavigator';
+import { store } from './src/store/store';
+import { setFavorites } from './src/store/features/foodCatalog/favoritesSlice';
+import AppNavigator from './src/navigations/AppNavigator';
 
 const InitApp = () => {
   const dispatch = useDispatch();
@@ -20,15 +19,13 @@ const InitApp = () => {
     loadFavorites();
   }, [dispatch]);
 
-  return <TabNavigator />;
+  return <AppNavigator />;
 };
 
 export default function App() {
   return (
     <Provider store={store}>
-      <NavigationContainer>
-        <InitApp />
-      </NavigationContainer>
+      <InitApp />
     </Provider>
   );
 }

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   View,
   Text,
@@ -9,13 +9,31 @@ import {
 } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import { useRoute, useNavigation } from '@react-navigation/native';
+import { useDispatch, useSelector } from 'react-redux';
+import { toggleFavorite } from '../store/features/foodCatalog/favoritesSlice';
+import { RootState } from '../store/store';
 
 const DetailsScreen = () => {
   const route: any = useRoute();
   const navigation: any = useNavigation();
   const item = route.params?.item ?? {};
 
+  const dispatch = useDispatch();
+  const favorites = useSelector((state: RootState) => state.favorites.items);
   const [isFavorite, setIsFavorite] = useState(false);
+
+  useEffect(() => {
+    const exists = favorites.some((f: any) => f.id === item.id);
+    setIsFavorite(!!exists);
+  }, [favorites, item.id]);
+
+  const onToggleFavorite = () => {
+    dispatch(toggleFavorite(item));
+    // optimistic toggle; the slice will persist to AsyncStorage
+    setIsFavorite((prev) => !prev);
+  };
+
+  const [qty, setQty] = useState(1);
 
   return (
     <View style={styles.container}>
@@ -25,21 +43,15 @@ const DetailsScreen = () => {
         imageStyle={styles.headerImageStyle}
       >
         <View style={styles.headerButtons}>
-          <Pressable
-            style={styles.circleBtn}
-            onPress={() => navigation.goBack()}
-          >
+          <Pressable style={styles.circleBtn} onPress={() => navigation.goBack()}>
             <Icon name="arrow-back" size={24} color="#1a1a1a" />
           </Pressable>
 
-          <Pressable
-            style={styles.circleBtn}
-            onPress={() => setIsFavorite(!isFavorite)}
-          >
+          <Pressable style={styles.circleBtn} onPress={onToggleFavorite}>
             <Icon
               name={isFavorite ? 'favorite' : 'favorite-border'}
               size={24}
-              color="#1a1a1a"
+              color="#00e05e"
             />
           </Pressable>
         </View>
@@ -59,9 +71,7 @@ const DetailsScreen = () => {
         </View>
 
         <View style={styles.titleRow}>
-          <Text style={styles.title}>
-            {item.name ?? 'Gourmet Avocado Toast'}
-          </Text>
+          <Text style={styles.title}>{item.name ?? 'Gourmet Avocado Toast'}</Text>
         </View>
 
         <View style={styles.priceRow}>
@@ -72,9 +82,7 @@ const DetailsScreen = () => {
           <View style={styles.metaItem}>
             <Text style={styles.metaStar}>★</Text>
             <Text style={styles.metaText}>{item.rating ?? '4.8'}</Text>
-            <Text style={styles.metaMuted}>
-              ({item.reviews ?? '124'} reviews)
-            </Text>
+            <Text style={styles.metaMuted}>({item.reviews ?? '124'} reviews)</Text>
           </View>
         </View>
 
@@ -151,7 +159,7 @@ const styles = StyleSheet.create({
     marginBottom: 4,
   },
   title: {
-    fontSize: 32,
+    fontSize: 30,
     fontWeight: '800',
     color: '#1a1a1a',
     lineHeight: 38,
@@ -163,7 +171,7 @@ const styles = StyleSheet.create({
   price: {
     color: '#00C853',
     fontWeight: '800',
-    fontSize: 28,
+    fontSize: 26,
   },
   metaRow: {
     flexDirection: 'row',
@@ -189,13 +197,6 @@ const styles = StyleSheet.create({
     color: '#9e9e9e',
     marginLeft: 4,
     fontSize: 15,
-  },
-  dot: {
-    width: 4,
-    height: 4,
-    borderRadius: 2,
-    backgroundColor: '#bdbdbd',
-    marginHorizontal: 12,
   },
   pillsRow: {
     flexDirection: 'row',

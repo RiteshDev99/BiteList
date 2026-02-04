@@ -1,30 +1,27 @@
-import React, { memo, useState } from 'react';
+import React, { memo } from 'react';
 import { View, Text, Image, Pressable, StyleSheet } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { FoodItem } from '../store/features/foodCatalog/ types.ts';
 
 interface Props {
   item: FoodItem;
-  // onPress removed because card handles navigation internally
   onFavoriteToggle?: (item: FoodItem, liked: boolean) => void;
   hideImage?: boolean;
   fullWidth?: boolean;
-  grid?: boolean; // new: render as grid cell (flex:1)
+  grid?: boolean;
 }
 
-const FoodCard = ({ item, onFavoriteToggle, hideImage, fullWidth, grid }: Props) => {
-  const [liked, setLiked] = useState(false);
+const FoodCard = ({ item, hideImage, fullWidth, grid }: Props) => {
   const navigation: any = useNavigation();
 
-  const toggleFavorite = () => {
-    const newValue = !liked;
-    setLiked(newValue);
-    onFavoriteToggle?.(item, newValue);
-  };
-
   const openDetails = () => {
-    // navigate to tab 'Details' and pass item
-    navigation.navigate('Details', { item });
+    // prefer navigating on parent navigator (stack) so Details is pushed above tabs
+    const parent = navigation.getParent?.();
+    if (parent && typeof parent.navigate === 'function') {
+      parent.navigate('Details', { item });
+    } else {
+      navigation.navigate('Details', { item });
+    }
   };
 
   return (
@@ -45,24 +42,14 @@ const FoodCard = ({ item, onFavoriteToggle, hideImage, fullWidth, grid }: Props)
       ) : null}
 
       <View style={styles.content}>
-        {/* Favorite */}
-        <Pressable style={styles.heart} onPress={toggleFavorite}>
-          <Text style={[styles.heartText, liked && styles.heartTextActive]}>♥</Text>
-        </Pressable>
-
-        {/* Rating */}
         <View style={styles.ratingRow}>
           <Text style={styles.star}>★</Text>
           <Text style={styles.rating}>{item.rating ?? 4.8}</Text>
           <Text style={styles.count}>(120+)</Text>
         </View>
-
-        {/* Title */}
         <Text numberOfLines={2} style={[styles.title, grid && styles.titleGrid]}>
           {item.name}
         </Text>
-
-        {/* Tags */}
         <View style={styles.tagRow}>
           {item.category && (
             <View style={styles.tag}>
