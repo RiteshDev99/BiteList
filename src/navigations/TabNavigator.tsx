@@ -45,7 +45,7 @@ const TabNavigator = () => {
             <Icon
               name={iconName}
               size={26}
-              color={focused ? '#F2B705' : '#999'}
+              color={focused ? '#00e05e' : '#999'}
             />
           );
         },
