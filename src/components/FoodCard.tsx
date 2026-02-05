@@ -1,7 +1,7 @@
 import React, { memo } from 'react';
 import { View, Text, Image, Pressable, StyleSheet } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
-import { FoodItem } from '../store/features/foodCatalog/ types.ts';
+import { FoodItem } from '../store/features/foodCatalog/types';
 
 interface Props {
   item: FoodItem;
@@ -15,7 +15,6 @@ const FoodCard = ({ item, hideImage, fullWidth, grid }: Props) => {
   const navigation: any = useNavigation();
 
   const openDetails = () => {
-    // prefer navigating on parent navigator (stack) so Details is pushed above tabs
     const parent = navigation.getParent?.();
     if (parent && typeof parent.navigate === 'function') {
       parent.navigate('Details', { item });
@@ -47,16 +46,19 @@ const FoodCard = ({ item, hideImage, fullWidth, grid }: Props) => {
           <Text style={styles.rating}>{item.rating ?? 4.8}</Text>
           <Text style={styles.count}>(120+)</Text>
         </View>
+
         <Text numberOfLines={2} style={[styles.title, grid && styles.titleGrid]}>
           {item.name}
         </Text>
+
         <View style={styles.tagRow}>
           {item.category && (
             <View style={styles.tag}>
               <Text style={styles.tagText}>{item.category.toUpperCase()}</Text>
             </View>
           )}
-          {item.price && (
+
+          {item.price !== undefined && (
             <View style={styles.priceTag}>
               <Text style={styles.priceText}>${item.price}</Text>
             </View>
@@ -71,29 +73,27 @@ export default memo(FoodCard);
 
 const styles = StyleSheet.create({
   card: {
-    width: 180,
     borderRadius: 12,
-    marginRight: 16,
     backgroundColor: '#fff',
     overflow: 'hidden',
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.08,
+    shadowOpacity: 0.06,
     shadowRadius: 6,
     elevation: 3,
+    marginBottom: 12,
+    minWidth: 170,
   },
   cardFull: {
     width: '100%',
-    marginRight: 0,
     borderRadius: 12,
-    marginBottom: 12,
     padding: 0,
+    marginBottom: 12,
   },
   cardGrid: {
-    flexBasis: '48%',
-    flexGrow: 0,
-    marginHorizontal: 4,
-    marginBottom: 12,
+    flex: 1,
+    marginHorizontal: 6,
+    maxWidth: '48%',
     borderRadius: 12,
     padding: 0,
     backgroundColor: '#fff',
@@ -108,29 +108,13 @@ const styles = StyleSheet.create({
     borderTopRightRadius: 12,
   },
   imageGrid: {
-    height: 110,
+    height: 120,
     borderTopLeftRadius: 12,
     borderTopRightRadius: 12,
   },
   content: {
     padding: 10,
     paddingTop: 8,
-  },
-  heart: {
-    position: 'absolute',
-    top: 10,
-    right: 10,
-    backgroundColor: '#fff',
-    padding: 6,
-    borderRadius: 20,
-    zIndex: 2,
-  },
-  heartText: {
-    color: '#4CAF50',
-    fontSize: 14,
-  },
-  heartTextActive: {
-    color: '#fff',
   },
   ratingRow: {
     flexDirection: 'row',

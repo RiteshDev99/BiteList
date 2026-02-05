@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import {
   View,
   Text,
@@ -6,34 +6,55 @@ import {
   ImageBackground,
   Pressable,
   ScrollView,
+  FlatList,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import { useRoute, useNavigation } from '@react-navigation/native';
 import { useDispatch, useSelector } from 'react-redux';
 import { toggleFavorite } from '../store/features/foodCatalog/favoritesSlice';
 import { RootState } from '../store/store';
+import RecommendedCard from '../components/RecommendedCard';
 
 const DetailsScreen = () => {
   const route: any = useRoute();
   const navigation: any = useNavigation();
-  const item = route.params?.item ?? {};
+  const item = useMemo(() => route.params?.item ?? {}, [route.params]);
 
   const dispatch = useDispatch();
   const favorites = useSelector((state: RootState) => state.favorites.items);
+  const allFoods = useSelector((state: RootState) => state.foodCatalog.foods);
   const [isFavorite, setIsFavorite] = useState(false);
+  const [recommended, setRecommended] = useState<any[]>([]);
 
   useEffect(() => {
     const exists = favorites.some((f: any) => f.id === item.id);
     setIsFavorite(!!exists);
   }, [favorites, item.id]);
 
+  useEffect(() => {
+    if (!allFoods || allFoods.length === 0) {
+      setRecommended([]);
+      return;
+    }
+
+    const tags = item.tags ?? [];
+    if (!tags || tags.length === 0) {
+      setRecommended([]);
+      return;
+    }
+
+    const recs = allFoods
+      .filter((f: any) => f.id !== item.id)
+      .filter((f: any) => (f.tags ?? []).some((t: string) => tags.includes(t)))
+      .slice(0, 6);
+
+    setRecommended(recs);
+  }, [allFoods, item]);
+
   const onToggleFavorite = () => {
     dispatch(toggleFavorite(item));
-    // optimistic toggle; the slice will persist to AsyncStorage
-    setIsFavorite((prev) => !prev);
+    setIsFavorite(prev => !prev);
   };
-
-  const [qty, setQty] = useState(1);
 
   return (
     <View style={styles.container}>
@@ -43,7 +64,10 @@ const DetailsScreen = () => {
         imageStyle={styles.headerImageStyle}
       >
         <View style={styles.headerButtons}>
-          <Pressable style={styles.circleBtn} onPress={() => navigation.goBack()}>
+          <Pressable
+            style={styles.circleBtn}
+            onPress={() => navigation.goBack()}
+          >
             <Icon name="arrow-back" size={24} color="#1a1a1a" />
           </Pressable>
 
@@ -51,7 +75,7 @@ const DetailsScreen = () => {
             <Icon
               name={isFavorite ? 'favorite' : 'favorite-border'}
               size={24}
-              color="#00e05e"
+              color={isFavorite ? '#FF6B6B' : '#1a1a1a'}
             />
           </Pressable>
         </View>
@@ -65,13 +89,15 @@ const DetailsScreen = () => {
         <View style={styles.badgeRow}>
           <View style={styles.badge}>
             <Text style={styles.badgeText}>
-              {(item.category ?? 'BREAKFAST & BRUNCH').toUpperCase()}
+              {(item.category ?? 'BREAKFAST').toUpperCase()}
             </Text>
           </View>
         </View>
 
         <View style={styles.titleRow}>
-          <Text style={styles.title}>{item.name ?? 'Gourmet Avocado Toast'}</Text>
+          <Text style={styles.title}>
+            {item.name ?? 'Gourmet Avocado Toast'}
+          </Text>
         </View>
 
         <View style={styles.priceRow}>
@@ -82,15 +108,36 @@ const DetailsScreen = () => {
           <View style={styles.metaItem}>
             <Text style={styles.metaStar}>★</Text>
             <Text style={styles.metaText}>{item.rating ?? '4.8'}</Text>
-            <Text style={styles.metaMuted}>({item.reviews ?? '124'} reviews)</Text>
+            <Text style={styles.metaMuted}>
+              ({item.reviews ?? '124'} reviews)
+            </Text>
           </View>
         </View>
 
         <Text style={styles.sectionTitle}>Description</Text>
         <Text style={styles.description}>
-          {item.description ??
-            'Sourdough bread toasted to perfection, topped with creamy smashed hass avocado, organic cherry tomatoes, feta cheese crumbles, and a drizzle of balsamic glaze. Garnished with fresh chili flakes and microgreens.'}
+          {item.description ?? 'No description available.'}
         </Text>
+
+        {recommended && recommended.length > 0 && (
+          <View style={styles.recsWrap}>
+            <Text style={[styles.sectionTitle, styles.recsTitle]}>
+              Recommended for you
+            </Text>
+            <FlatList
+              data={recommended}
+              keyExtractor={recItem => `rec-${recItem.id}`}
+              horizontal
+              showsHorizontalScrollIndicator={false}
+              contentContainerStyle={styles.recsList}
+              renderItem={({ item: recItem }) => (
+                <View style={styles.cardWrapper}>
+                  <RecommendedCard item={recItem} />
+                </View>
+              )}
+            />
+          </View>
+        )}
       </ScrollView>
     </View>
   );
@@ -156,28 +203,28 @@ const styles = StyleSheet.create({
   },
   titleRow: {
     paddingHorizontal: 24,
-    marginBottom: 4,
+    marginBottom: 2,
   },
   title: {
-    fontSize: 30,
+    fontSize: 20,
     fontWeight: '800',
     color: '#1a1a1a',
-    lineHeight: 38,
+    lineHeight: 28,
   },
   priceRow: {
     paddingHorizontal: 24,
-    marginBottom: 12,
+    marginBottom: 8,
   },
   price: {
     color: '#00C853',
     fontWeight: '800',
-    fontSize: 26,
+    fontSize: 24,
   },
   metaRow: {
     flexDirection: 'row',
     alignItems: 'center',
     paddingHorizontal: 24,
-    marginBottom: 16,
+    marginBottom: 5,
   },
   metaItem: {
     flexDirection: 'row',
@@ -185,7 +232,7 @@ const styles = StyleSheet.create({
   },
   metaStar: {
     color: '#00C853',
-    fontSize: 18,
+    fontSize: 16,
     marginRight: 4,
   },
   metaText: {
@@ -198,43 +245,32 @@ const styles = StyleSheet.create({
     marginLeft: 4,
     fontSize: 15,
   },
-  pillsRow: {
-    flexDirection: 'row',
-    paddingHorizontal: 24,
-    marginBottom: 24,
-    flexWrap: 'wrap',
-  },
-  pill: {
-    backgroundColor: '#F1F8F4',
-    paddingHorizontal: 14,
-    paddingVertical: 10,
-    borderRadius: 20,
-    marginRight: 8,
-    marginBottom: 8,
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  pillIcon: {
-    marginRight: 6,
-    fontSize: 14,
-  },
-  pillText: {
-    color: '#2E7D32',
-    fontWeight: '600',
-    fontSize: 14,
-  },
   sectionTitle: {
-    fontSize: 22,
+    fontSize: 18,
     fontWeight: '700',
     paddingHorizontal: 24,
-    marginBottom: 12,
+    marginBottom: 8,
+    marginTop: 8,
     color: '#1a1a1a',
   },
   description: {
     paddingHorizontal: 24,
     color: '#666666',
-    lineHeight: 24,
+    lineHeight: 22,
     fontSize: 15,
+    marginBottom: 5,
+  },
+  recsWrap: {
+    marginTop: 5,
+  },
+  recsTitle: {
+    marginBottom: 16,
+  },
+  recsList: {
+    paddingHorizontal: 24,
+  },
+  cardWrapper: {
+    marginRight: 16,
   },
 });
 

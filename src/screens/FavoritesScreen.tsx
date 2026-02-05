@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, StyleSheet, FlatList } from 'react-native';
+import { View,  StyleSheet, FlatList } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
 import TopBar from '../components/TopBar';
 import FoodCard from '../components/FoodCard';
@@ -27,7 +27,6 @@ const FavoriteScreen: React.FC = () => {
           title="Your Plate is Empty!"
           icon="heart-off-outline"
           actionText="Explore"
-          // onActionPress={() => navigation.navigate('Home')}
         />
       ) : (
         <FlatList

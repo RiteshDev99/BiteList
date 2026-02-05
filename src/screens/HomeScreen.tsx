@@ -1,7 +1,6 @@
 import React, { useEffect } from 'react';
 import {
   View,
-  Text,
   StyleSheet,
   FlatList,
 } from 'react-native';
@@ -11,7 +10,7 @@ import FoodCard from '../components/FoodCard';
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchFoods } from '../store/features/foodCatalog/foodThunks';
 import { AppDispatch, RootState } from '../store/store';
-import Loader from '../components/ui/Loader.tsx';
+import Loader from '../components/ui/Loader';
 
 const HomeScreen = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -33,18 +32,21 @@ const HomeScreen = () => {
       <View style={styles.contentContainer}>
         {status === 'loading' ? (
           <View style={styles.loaderWrap}>
-          <Loader/>
+            <Loader />
           </View>
         ) : (
           <FlatList
             data={foods}
-            keyExtractor={item => item.id.toString()}
+            keyExtractor={item => `food-${item.id}`}
             renderItem={({ item }) => (
               <FoodCard item={item} hideImage={false} grid />
             )}
             numColumns={2}
-            columnWrapperStyle={{ justifyContent: 'space-between' }}
+            columnWrapperStyle={styles.columnWrapper}
             contentContainerStyle={styles.listContent}
+            showsVerticalScrollIndicator={false}
+            removeClippedSubviews={true}
+            initialNumToRender={8}
           />
         )}
       </View>
@@ -54,7 +56,6 @@ const HomeScreen = () => {
 
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: '#FFFFFF' },
-
   sectionHeader: {
     flexDirection: 'row',
     justifyContent: 'space-between',
@@ -84,7 +85,10 @@ const styles = StyleSheet.create({
   listContent: {
     paddingHorizontal: 8,
     paddingTop: 8,
-    paddingBottom: 24,
+    paddingBottom: 12,
+  },
+  columnWrapper: {
+    justifyContent: 'space-between',
   },
 });
 

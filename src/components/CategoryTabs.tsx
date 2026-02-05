@@ -1,11 +1,13 @@
 import React, { useEffect } from 'react';
-import { View, Text, Pressable, ScrollView, StyleSheet, ActivityIndicator } from 'react-native';
+import { View, Text, Pressable, ScrollView, StyleSheet } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
-import { setCategory } from '../store/features/foodCatalog/foodSlice.ts';
+import { setCategory } from '../store/features/foodCatalog/foodSlice';
 import { fetchCategories } from '../store/features/foodCatalog/foodThunks';
 import { AppDispatch } from '../store/store';
 
-const DEFAULT_CATEGORIES: string[] = [];
+const DEFAULT_CATEGORIES: { key: string; label: string }[] = [
+  { key: 'all', label: 'All' },
+];
 
 export default function CategoryTabs() {
   const dispatch = useDispatch<AppDispatch>();
@@ -14,38 +16,34 @@ export default function CategoryTabs() {
   const status: string = useSelector((state: any) => state.foodCatalog.status);
 
   useEffect(() => {
-    if ((categories == null || categories.length === 0) && status !== 'loading') {
+    if ((!categories || categories.length === 0) && status !== 'loading') {
       dispatch(fetchCategories());
     }
   }, [categories, dispatch, status]);
 
-  const normalized = Array.from(new Set([
-    'all',
-    ...categories.map((c: string) => (c || '').toLowerCase()),
-  ]));
+  const cats = [
+    { key: 'all', label: 'All' },
+    ...categories.map((c: string) => ({ key: (c ?? '').toLowerCase(), label: c })),
+  ];
 
-  const list = normalized.length ? normalized : DEFAULT_CATEGORIES;
+  const list = cats.length ? cats : DEFAULT_CATEGORIES;
 
   return (
     <View style={styles.container}>
       {status === 'loading' && (!categories || categories.length === 0) ? (
-        <View style={styles.loaderWrap}>
-          <ActivityIndicator size="small" color="#00e05e" />
-        </View>
+        <View style={styles.loaderWrap} />
       ) : (
         <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-          {list.map((cat: string, idx: number) => {
-            const active = selected === cat;
+          {list.map((cat: { key: string; label: string }, idx: number) => {
+            const active = selected === cat.key;
 
             return (
               <Pressable
-                key={`${cat}-${idx}`}
-                onPress={() => dispatch(setCategory(cat))}
+                key={`${cat.key}-${idx}`}
+                onPress={() => dispatch(setCategory(cat.key))}
                 style={[styles.tab, active && styles.activeTab]}
               >
-                <Text style={[styles.text, active && styles.activeText]}>
-                  {cat.toUpperCase()}
-                </Text>
+                <Text style={[styles.text, active && styles.activeText]}>{cat.label.toUpperCase()}</Text>
               </Pressable>
             );
           })}

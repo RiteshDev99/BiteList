@@ -8,7 +8,7 @@ type LoaderProps = {
   style?: ViewStyle;
 };
 
-const Loader = ({ size = 100, fullscreen = false, style }: LoaderProps) => {
+const Loader = ({ size = 110, fullscreen = false, style }: LoaderProps) => {
   const animation = useRef<LottieView>(null);
 
   useEffect(() => {
