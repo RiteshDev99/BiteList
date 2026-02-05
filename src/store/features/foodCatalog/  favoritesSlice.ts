@@ -1,6 +1,6 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { FavoritesState, FoodItem } from './ types.ts';
+import { FavoritesState, FoodItem } from './types.ts';
 
 const FAVORITES_KEY = 'BITE_LIST_FAVORITES';
 

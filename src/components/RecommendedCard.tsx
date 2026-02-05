@@ -48,7 +48,6 @@ const RecommendedCard: React.FC<RecommendedCardProps> = ({
           </View>
         )}
 
-        {/* Category Badge */}
         {item.category && (
           <View style={styles.categoryBadge}>
             <Text style={styles.categoryText}>
@@ -58,7 +57,6 @@ const RecommendedCard: React.FC<RecommendedCardProps> = ({
         )}
       </View>
 
-      {/* Content Section */}
       <View style={styles.content}>
         <Text numberOfLines={2} style={styles.title}>
           {item.name ?? 'Dish Name'}
@@ -73,7 +71,6 @@ const RecommendedCard: React.FC<RecommendedCardProps> = ({
           <Text style={styles.price}>${item.price ?? '--'}</Text>
         </View>
 
-        {/* Optional: Reviews count */}
         {item.reviews && (
           <Text style={styles.reviews}>{item.reviews} reviews</Text>
         )}
